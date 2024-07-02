@@ -2,16 +2,16 @@ This project is done as proof of concept that we can use @Observable, @Bindable 
 
 IMPORTANT: As I said, this is just a proof of concept, I don't think that using Binding<T> outside of views is a great idea, but it can work. Also currently I just pass Binding to TextField and everything works, but this can also work in unidirectional approach because view model already owns the binding.
 
-How this works?
+### How does this work?
 - there are two screens - list of notes and note details. List shows list of notes and details screen allows us to edit note's text.
-- NoteManager.notes is our source of truth for the whole app, we don't copy notes array or individual notes anywhere.
-- NoteListViewModel is @Observable, it has listItems computed property that is read by the view. This means that whenever our source of truth changes (NoteManager.notes), our view will reflect those changes. Note that in order for this to work, NoteManager must also be @Observable.
+- `NoteManager.notes` is our source of truth for the whole app, we don't copy notes array or individual notes anywhere.
+- `NoteListViewModel` is an @Observable, it has `listItems` computed property that is read by the view. This means that whenever our source of truth changes (`NoteManager.notes`), our view will reflect those changes. Note that in order for this to work, `NoteManager` must also be @Observable. This works with @Observable but wouldn't work as easy with ObservableObject (pre iOS 17) because of computed property and because nesting of ObservableObject doesn't work automatically.
 ```
 var listItems: [NoteListItem] {
     manageNotesUseCase.notes.map({ .init(id: $0.id, text: $0.text) })
 }
 ```
-- NoteDetailsViewModel can mutate note but it doesn't copy it or store it, it holds Binding to the note, which means that NoteDetailsViewModel has direct link to source of truth (read and write).
+- `NoteDetailsViewModel` can mutate the note but it doesn't hold a copy if it, it holds Binding to the note. This means that `NoteDetailsViewModel` has direct link to source of truth (read and write).
 
 ```
 @MainActor @Observable
