@@ -56,7 +56,7 @@ private extension UIApplication {
     var topPresentedViewController: UIViewController? {
         return UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
-            .filter { $0.activationState == .foregroundActive }
+            .filter { $0.activationState == .foregroundActive || $0.activationState == .foregroundInactive }
             .first?
             .keyWindow?
             .rootViewController?
